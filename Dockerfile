@@ -1,5 +1,12 @@
-FROM rust
+# Use a base image with the latest version of Rust installed
+FROM rust:latest
 
-COPY docker-program /bin/docker-program
+# Set the working directory in the container
+WORKDIR /app
 
-CMD ["/bin/docker-program"]
+# Copy the local application code into the container
+COPY . .
+
+# Specify the command to run when the container starts
+CMD ["./target/release/my-rust-app"]
+
