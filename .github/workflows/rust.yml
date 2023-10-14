@@ -30,6 +30,7 @@ jobs:
         registry: docker.io
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
+        tags: 'docker.io/shazindia86/githubactionsdemo:${{ github.sha }}'
         
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
