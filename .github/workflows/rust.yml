@@ -22,8 +22,12 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
 
-    - name: Run Clippy
-      run: cargo clippy --all-targets --all-features
+    - name: Install cargo-sonar and run Clippy
+      run: |
+        cargo clippy --all-targets --all-features
+        cargo install cargo-sonar
+        cargo clippy --message-format json > my-clippy-report.json
+        cargo sonar --issues clippy --clippy-path my-clippy-report.json
     
     - name: Run cargo-tarpaulin
       uses: actions-rs/tarpaulin@v0.1
