@@ -25,7 +25,7 @@ jobs:
         override: true
 
     - name: Set Rustflags
-      run: echo "RUSTFLAGS='-C opt-level=3 -C target-cpu=native -C lto'" >> $GITHUB_ENV
+      run: echo "RUSTFLAGS='-C opt-level=3 '" >> $GITHUB_ENV
 
     - name: Build Project with Optimizations
       run: cargo build --release -v
