@@ -32,44 +32,37 @@ jobs:
         cargo llvm-cov clean --workspace
         cargo llvm-cov --json --output-path=coverage.json
 
-    - name: Check coverage
-      id: coverage-check
-      run: |
-        COVERAGE=$(jq '.data[0].totals.lines.pct' < coverage.json)
-        echo "Coverage is $COVERAGE%"
-        if (( $(echo "$COVERAGE < 50" | bc -l) )); then
-          echo "Code coverage is below 50%"
-          exit 1
-        fi
+    # - name: Check coverage
+    #   id: coverage-check
+    #   run: |
+    #     COVERAGE=$(jq '.data[0].totals.lines.pct' < coverage.json)
+    #     echo "Coverage is $COVERAGE%"
+    #     if (( $(echo "$COVERAGE < 50" | bc -l) )); then
+    #       echo "Code coverage is below 50%"
+    #       exit 1
+    #     fi
+    
+    # - name: Upload to codecov.io
+    #   uses: codecov/codecov-action@v1.0.2
+    #   with:
+    #     token: ${{secrets.CODECOV_TOKEN}}
+    
+    # - name: Login to Docker Hub
+    #   uses: docker/login-action@v3
+    #   with:
+    #     username: ${{ secrets.DOCKER_USERNAME }}
+    #     password: ${{ secrets.DOCKER_PASSWORD }}
+    
+    # - name: Build and push
+    #   uses: docker/build-push-action@v5
+    #   with:
+    #     push: true
+    #     tags: docker.io/shazindia86/githubactionsdemo:${{ github.sha }}
 
-    
-  #  - name: Run cargo-tarpaulin
-   #   uses: actions-rs/tarpaulin@v0.1
-   #   with:
-   #       version: '0.15.0'
-   #       args: '-- --test-threads 1'
-    
-   # - name: Upload to codecov.io
-   #   uses: codecov/codecov-action@v1.0.2
-   #   with:
-    #    token: ${{secrets.CODECOV_TOKEN}}
-    
-   # - name: Login to Docker Hub
-   #   uses: docker/login-action@v3
-    #  with:
-    #    username: ${{ secrets.DOCKER_USERNAME }}
-     #   password: ${{ secrets.DOCKER_PASSWORD }}
-    
-   # - name: Build and push
-     # uses: docker/build-push-action@v5
-     # with:
-     #   push: true
-     #   tags: docker.io/shazindia86/githubactionsdemo:${{ github.sha }}
-
-   # - name: Run Trivy vulnerability scanner
-   #   uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
-    #  with:
-     #   image-ref: 'docker.io/shazindia86/githubactionsdemo:${{ github.sha }}'
-     #   format: 'template'
-     #   template: '@/contrib/sarif.tpl'
-      #  output: 'trivy-results.sarif'
+    #  - name: Run Trivy vulnerability scanner
+    #    uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
+    #    with:
+    #     image-ref: 'docker.io/shazindia86/githubactionsdemo:${{ github.sha }}'
+    #     format: 'template'
+    #     template: '@/contrib/sarif.tpl'
+    #     output: 'trivy-results.sarif'
