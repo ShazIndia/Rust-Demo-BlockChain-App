@@ -1,31 +1,33 @@
-name: Rust-APP
+name: Build Rust Project with Optimizations
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
+
     steps:
-    - uses: actions/checkout@v4
-    - name: Build
-      run: cargo build --verbose
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-
-
-    - name: Install Rust Toolchain and Components
+    - name: Install Rust
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
-        components: clippy, llvm-tools-preview, rustfmt  # Add more components here as needed
-        override: true
+        components: clippy, llvm-tools-preview
 
     - name: Build Project with Optimizations
-      run: cargo build --release -v
+      run: cargo build --release
+      env:
+        RUSTFLAGS: '-C opt-level=3 -C target-cpu=native -C lto'
+
 
     # - name: Run tests
     #   run: cargo test --verbose
