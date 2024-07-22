@@ -8,7 +8,7 @@ on:
         required: true
         default: 'stable'
       components:
-        description: 'Rust components to install (comma-separated, e.g., clippy, llvm-tools-preview)'
+        description: 'Rust components to install (e.g., clippy, llvm-tools-preview)'
         required: true
         default: 'clippy, llvm-tools-preview'
       rustflags:
