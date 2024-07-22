@@ -16,6 +16,7 @@ on:
         required: false
         default: ''
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,13 +28,15 @@ jobs:
     - name: Install Rust
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: stable
-        components: clippy, llvm-tools-preview
+        toolchain: ${{ github.event.inputs.toolchain }}
+        components: ${{ github.event.inputs.components }}
+
+    - name: Set Rust flags
+      if: ${{ github.event.inputs.rustflags != '' }}
+      run: echo "RUSTFLAGS=${{ github.event.inputs.rustflags }}" >> $GITHUB_ENV
 
     - name: Build Project with Optimizations
       run: cargo build --release
-      env:
-        RUSTFLAGS: '-C opt-level=3 -C target-cpu=native'
 
 
     # - name: Run tests
