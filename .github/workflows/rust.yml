@@ -1,13 +1,20 @@
-name: Build Rust Project with Optimizations
+name: Build Rust Project
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
+    inputs:
+      toolchain:
+        description: 'Rust toolchain version (e.g., stable, nightly)'
+        required: true
+        default: 'stable'
+      components:
+        description: 'Rust components to install (comma-separated, e.g., clippy, llvm-tools-preview)'
+        required: true
+        default: 'clippy, llvm-tools-preview'
+      rustflags:
+        description: 'Rust build flags (e.g., -C opt-level=3 -C target-cpu=native -C lto)'
+        required: false
+        default: ''
 
 jobs:
   build:
