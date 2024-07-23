@@ -50,7 +50,10 @@ jobs:
     - name: Install additional components
       run: |
         if [ -n "${{ inputs.components }}" ]; then
-          rustup component add ${{ inputs.components }}
+          IFS=',' read -r -a components <<< "${{ inputs.components }}"
+          for component in "${components[@]}"; do
+            rustup component add "$component"
+          done
         fi
 
     - name: Set Rust flags
