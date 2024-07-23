@@ -1,4 +1,4 @@
-name: Build Rust Project
+name: Build Rust Project with User Inputs
 
 on:
   workflow_dispatch:
@@ -7,40 +7,74 @@ on:
         description: 'Rust toolchain version (e.g., stable, nightly)'
         required: true
         default: 'stable'
-      components:
-        description: 'Rust components to install (e.g., clippy, llvm-tools-preview)'
+      target:
+        description: 'Compilation target (e.g., x86_64-unknown-linux-gnu)'
         required: true
-        default: 'clippy, llvm-tools-preview'
+        default: 'x86_64-unknown-linux-gnu'
+      components:
+        description: 'Rust components to install (comma-separated, e.g., clippy, rustfmt, llvm-tools)'
+        required: false
+        default: 'clippy, rustfmt, llvm-tools'
       rustflags:
-        description: 'Rust build flags (e.g., -C opt-level=3 -C target-cpu=native -C lto)'
+        description: 'Rust compiler flags (e.g., -C opt-level=3 -C target-cpu=native -C lto)'
         required: false
         default: ''
-      build_command:
-        description: 'Cargo build command (e.g., cargo build --release)'
+      release:
+        description: 'Build release version (true/false)'
         required: true
-        default: 'cargo build --release'
-
+        default: 'true'
+      cache:
+        description: 'Enable cache (true/false)'
+        required: false
+        default: 'true'
+      cache-key:
+        description: 'Cache key for cargo cache'
+        required: false
+        default: 'cargo-cache'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Checkout repository
+    - name: Check out the repository
       uses: actions/checkout@v2
 
-    - name: Install Rust
+    - name: Set up Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: ${{ inputs.toolchain }}
-        components: ${{ inputs.components }}
+        toolchain: ${{ github.event.inputs.toolchain }}
+        target: ${{ github.event.inputs.target }}
+        components: ${{ github.event.inputs.components }}
+
+    - name: Install additional components
+      run: |
+        if [ -n "${{ github.event.inputs.components }}" ]; then
+          rustup component add ${{ github.event.inputs.components }}
+        fi
 
     - name: Set Rust flags
-      if: ${{ github.event.inputs.rustflags != '' }}
-      run: echo "RUSTFLAGS=${{ inputs.rustflags }}" >> $GITHUB_ENV
+      run: echo "RUSTFLAGS=${{ github.event.inputs.rustflags }}" >> $GITHUB_ENV
 
-    - name: Build Project with Optimizations
-      run: ${{ inputs.build_command }}
+    - name: Set up cache
+      if: ${{ github.event.inputs.cache == 'true' }}
+      uses: actions/cache@v2
+      with:
+        path: ~/.cargo
+        key: ${{ github.event.inputs.cache-key }}
+
+    - name: Build Project
+      run: cargo build ${{ github.event.inputs.release == 'true' && echo '--release' || echo '' }}
+      
+    - name: Run Tests
+      run: cargo test
+
+    - name: Display Rust Environment
+      run: rustup show
+
+    - name: Display Rust Components
+      run: rustup component list --installed
+
 
 
     # - name: Run tests
