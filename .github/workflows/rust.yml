@@ -57,7 +57,7 @@ jobs:
       run: echo "RUSTFLAGS=${{ inputs.rustflags }}" >> $GITHUB_ENV
 
     - name: Set up cache
-      if: ${{ ginputs.cache == 'true' }}
+      if: ${{ inputs.cache == 'true' }}
       uses: actions/cache@v2
       with:
         path: ~/.cargo
