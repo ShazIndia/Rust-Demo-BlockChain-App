@@ -66,9 +66,13 @@ jobs:
         path: ~/.cargo
         key: ${{ inputs.cache-key }}
 
-    - name: Build Project (Release)
-      if: ${{ github.event.inputs.release == 'true' }}
-      run: cargo build --release
+    - name: Build Project
+      run: |
+        if [ "${{ inputs.release }}" == "true" ]; then
+          cargo build --release
+        else
+          cargo build
+        fi
       
     - name: Run Tests
       run: cargo test
