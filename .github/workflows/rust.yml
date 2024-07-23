@@ -52,7 +52,7 @@ jobs:
         if [ -n "${{ inputs.components }}" ]; then
           IFS=',' read -r -a components <<< "${{ inputs.components }}"
           for component in "${components[@]}"; do
-            rustup component add "$component"
+            rustup component add "$(echo $component | xargs)"
           done
         fi
 
