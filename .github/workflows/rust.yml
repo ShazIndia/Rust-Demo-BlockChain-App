@@ -15,6 +15,10 @@ on:
         description: 'Rust build flags (e.g., -C opt-level=3 -C target-cpu=native -C lto)'
         required: false
         default: ''
+      build_command:
+        description: 'Cargo build command (e.g., cargo build --release)'
+        required: true
+        default: 'cargo build --release'
 
 
 jobs:
@@ -28,15 +32,15 @@ jobs:
     - name: Install Rust
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: ${{ github.event.inputs.toolchain }}
-        components: ${{ github.event.inputs.components }}
+        toolchain: ${{ inputs.toolchain }}
+        components: ${{ inputs.components }}
 
     - name: Set Rust flags
       if: ${{ github.event.inputs.rustflags != '' }}
-      run: echo "RUSTFLAGS=${{ github.event.inputs.rustflags }}" >> $GITHUB_ENV
+      run: echo "RUSTFLAGS=${{ inputs.rustflags }}" >> $GITHUB_ENV
 
     - name: Build Project with Optimizations
-      run: cargo build --release
+      run: ${{ inputs.build_command }}
 
 
     # - name: Run tests
