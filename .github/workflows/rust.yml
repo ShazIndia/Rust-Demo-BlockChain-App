@@ -43,28 +43,28 @@ jobs:
     - name: Set up Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
-        toolchain: ${{ github.event.inputs.toolchain }}
-        target: ${{ github.event.inputs.target }}
-        components: ${{ github.event.inputs.components }}
+        toolchain: ${{ inputs.toolchain }}
+        target: ${{ inputs.target }}
+        components: ${{ inputs.components }}
 
     - name: Install additional components
       run: |
-        if [ -n "${{ github.event.inputs.components }}" ]; then
-          rustup component add ${{ github.event.inputs.components }}
+        if [ -n "${{ inputs.components }}" ]; then
+          rustup component add ${{ inputs.components }}
         fi
 
     - name: Set Rust flags
-      run: echo "RUSTFLAGS=${{ github.event.inputs.rustflags }}" >> $GITHUB_ENV
+      run: echo "RUSTFLAGS=${{ inputs.rustflags }}" >> $GITHUB_ENV
 
     - name: Set up cache
-      if: ${{ github.event.inputs.cache == 'true' }}
+      if: ${{ ginputs.cache == 'true' }}
       uses: actions/cache@v2
       with:
         path: ~/.cargo
-        key: ${{ github.event.inputs.cache-key }}
+        key: ${{ inputs.cache-key }}
 
     - name: Build Project
-      run: cargo build ${{ github.event.inputs.release == 'true' && echo '--release' || echo '' }}
+      run: cargo build ${{ inputs.release == 'true' && echo '--release' || echo '' }}
       
     - name: Run Tests
       run: cargo test
