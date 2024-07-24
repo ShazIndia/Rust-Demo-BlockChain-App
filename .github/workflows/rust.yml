@@ -19,10 +19,13 @@ on:
         description: 'Rust compiler flags (e.g., -C opt-level=3 -C target-cpu=native -C lto)'
         required: false
         default: ''
-      release:
+      release_number:
         description: 'Build release version (true/false)'
-        required: true
-        default: 'true'
+        required: false
+        default: ''
+      build_params: 
+        required: false
+        default: '--release'
       cache:
         description: 'Enable cache (true/false)'
         required: false
@@ -68,8 +71,8 @@ jobs:
 
     - name: Build Project
       run: |
-        if [ "${{ inputs.release }}" == "true" ]; then
-          cargo build --release
+        if [ "${{ inputs.release_number }}" == "true" ]; then
+          cargo build ${{ inputs.build_params }}
         else
           cargo build
         fi
