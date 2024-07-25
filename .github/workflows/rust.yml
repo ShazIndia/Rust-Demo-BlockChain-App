@@ -1,4 +1,3 @@
-
 # .github/workflows/use-reusable-workflow.yml
 
 name: Use Reusable Rust Build Workflow
@@ -10,14 +9,14 @@ on:
 
 jobs:
   use-reusable-workflow:
-    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/rust-reusable-workflow.yaml@main
+    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/reusable-workflow.yml@main
     with:
       toolchain: 'stable'
       target: 'x86_64-unknown-linux-gnu'
       components: 'clippy, rustfmt, llvm-tools'
       rustflags: '-C opt-level=3 -C target-cpu=native -C lto'
-      release: 'true'
-      cache: 'true'
+      release: true
+      cache: true
       cache-key: 'cargo-cache'
 
 
