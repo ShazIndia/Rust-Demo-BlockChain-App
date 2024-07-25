@@ -14,7 +14,7 @@ jobs:
       toolchain: 'stable'
       target: 'x86_64-unknown-linux-gnu'
       components: 'clippy, rustfmt, llvm-tools'
-      rustflags: '-C opt-level=3 -C target-cpu=native -C lto'
+      rustflags: '-C opt-level=3 -C target-cpu=native'
       release: true
       cache: true
       cache-key: 'cargo-cache'
