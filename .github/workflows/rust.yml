@@ -4,21 +4,72 @@ name: Use Reusable Rust Build Workflow
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+    inputs:
+      toolchain:
+        description: 'Rust toolchain version (e.g., stable, nightly)'
+        required: true
+        default: 'stable'
+      target:
+        description: 'Compilation target (e.g., x86_64-unknown-linux-gnu)'
+        required: true
+        default: 'x86_64-unknown-linux-gnu'
+      components:
+        description: 'Rust components to install (comma-separated, e.g., clippy, rustfmt, llvm-tools)'
+        required: false
+        default: 'clippy, rustfmt, llvm-tools'
+      rustflags:
+        description: 'Rust compiler flags (e.g., -C opt-level=3 -C target-cpu=native -C lto)'
+        required: false
+        default: '-C opt-level=3 -C target-cpu=native -C lto'
+      release:
+        description: 'Build release version (true/false)'
+        required: true
+        type: boolean
+        default: true
+      cache:
+        description: 'Enable cache (true/false)'
+        required: false
+        type: boolean
+        default: true
+      cache-key:
+        description: 'Cache key for cargo cache'
+        required: false
+        default: 'cargo-cache'
 
 jobs:
   use-reusable-workflow:
-    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/rust-reusable-workflow.yaml@main
+    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/reusable-workflow.yml@main
     with:
       toolchain: ${{ inputs.toolchain }}
       target: ${{ inputs.target }}
       components: ${{ inputs.components }}
-      rustflags: '-C opt-level=3 -C target-cpu=native'
-      release: true
-      cache: true
-      cache-key: 'cargo-cache'
+      rustflags: ${{ inputs.rustflags }}
+      release: ${{ inputs.release }}
+      cache: ${{ inputs.cache }}
+      cache-key: ${{ inputs.cache-key }}
+
+
+# # .github/workflows/use-reusable-workflow.yml
+
+# name: Use Reusable Rust Build Workflow
+
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   use-reusable-workflow:
+#     uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/rust-reusable-workflow.yaml@main
+#     with:
+#       toolchain: ${{ inputs.toolchain }}
+#       target: ${{ inputs.target }}
+#       components: ${{ inputs.components }}
+#       rustflags: '-C opt-level=3 -C target-cpu=native'
+#       release: true
+#       cache: true
+#       cache-key: 'cargo-cache'
 
 
 
