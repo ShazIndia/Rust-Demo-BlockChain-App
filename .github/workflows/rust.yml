@@ -3,6 +3,7 @@
 name: Use Reusable Rust Build Workflow
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -11,13 +12,14 @@ jobs:
   use-reusable-workflow:
     uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/rust-reusable-workflow.yaml@main
     with:
-      toolchain: 'stable'
-      target: 'x86_64-unknown-linux-gnu'
-      components: 'clippy, rustfmt, llvm-tools'
+      toolchain: toolchain: ${{ inputs.toolchain }}
+      target: ${{ inputs.target }}
+      components: ${{ inputs.components }}
       rustflags: '-C opt-level=3 -C target-cpu=native'
       release: true
       cache: true
       cache-key: 'cargo-cache'
+
 
 
 # name: Build Rust Project with User Inputs
