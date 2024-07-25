@@ -12,7 +12,7 @@ jobs:
   use-reusable-workflow:
     uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/rust-reusable-workflow.yaml@main
     with:
-      toolchain: toolchain: ${{ inputs.toolchain }}
+      toolchain: ${{ inputs.toolchain }}
       target: ${{ inputs.target }}
       components: ${{ inputs.components }}
       rustflags: '-C opt-level=3 -C target-cpu=native'
