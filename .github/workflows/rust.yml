@@ -8,33 +8,20 @@ on:
       toolchain:
         description: 'Rust toolchain version (e.g., stable, nightly)'
         required: true
-        default: 'stable'
+        type: string
       target:
         description: 'Compilation target (e.g., x86_64-unknown-linux-gnu)'
         required: true
-        default: 'x86_64-unknown-linux-gnu'
+        type: string
       components:
         description: 'Rust components to install (comma-separated, e.g., clippy, rustfmt, llvm-tools)'
         required: false
-        default: 'clippy, rustfmt, llvm-tools'
+        type: string
       rustflags:
         description: 'Rust compiler flags (e.g., -C opt-level=3 -C target-cpu=native -C lto)'
         required: false
-        default: '-C opt-level=3 -C target-cpu=native -C lto'
-      release:
-        description: 'Build release version (true/false)'
-        required: true
-        type: boolean
-        default: true
-      cache:
-        description: 'Enable cache (true/false)'
-        required: false
-        type: boolean
-        default: true
-      cache-key:
-        description: 'Cache key for cargo cache'
-        required: false
-        default: 'cargo-cache'
+        type: string
+
 
 jobs:
   use-reusable-workflow:
@@ -44,9 +31,7 @@ jobs:
       target: ${{ inputs.target }}
       components: ${{ inputs.components }}
       rustflags: ${{ inputs.rustflags }}
-      release: ${{ inputs.release }}
-      cache: ${{ inputs.cache }}
-      cache-key: ${{ inputs.cache-key }}
+
 
 
 # # .github/workflows/use-reusable-workflow.yml
