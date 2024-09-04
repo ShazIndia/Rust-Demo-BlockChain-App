@@ -25,13 +25,11 @@ on:
 
 jobs:
   use-reusable-workflow:
-    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/rust-reusable-workflow.yaml@main
+    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/rust-reusable-workflow.yml@main
     with:
       toolchain: ${{ inputs.toolchain }}
       target: ${{ inputs.target }}
       components: ${{ inputs.components }}
-      rustflags: ${{ inputs.rustflags }}
-
 
 
 # # .github/workflows/use-reusable-workflow.yml
