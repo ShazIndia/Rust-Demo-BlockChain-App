@@ -1,6 +1,5 @@
 use sha2::{Digest, Sha256};
 use serde::{Serialize, Deserialize};
-use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Block {
@@ -40,21 +39,17 @@ impl Blockchain {
     }
 
     fn create_genesis_block() -> Block {
-        Block::new(0, Blockchain::current_timestamp(), "Genesis Block".to_string(), "0".to_string())
+        Block::new(0, 0, "Genesis Block".to_string(), "0".to_string())
     }
 
     pub fn add_block(&mut self, data: String) {
         let previous_block = self.chain.last().unwrap();
         let new_block = Block::new(
             previous_block.index + 1,
-            Blockchain::current_timestamp(),
+            1627504203,
             data,
             previous_block.hash.clone(),
         );
         self.chain.push(new_block);
-    }
-
-    fn current_timestamp() -> u128 {
-        SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_millis()
     }
 }
