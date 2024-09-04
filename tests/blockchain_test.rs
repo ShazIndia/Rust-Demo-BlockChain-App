@@ -1,5 +1,5 @@
-// Import the blockchain module from the main crate
-use crate::blockchain::{Block, Blockchain};
+// This assumes that `blockchain.rs` is in the `src` directory.
+use blockchain_rust::blockchain::{Block, Blockchain};
 
 #[cfg(test)]
 mod tests {
