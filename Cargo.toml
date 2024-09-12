@@ -5,6 +5,9 @@ edition = "2021"
 
 [dependencies]
 #serde = { version = "1.0", features = ["derive"] }
-sserde = "1.0.130"
+serde = "1.0.130"
 sha2 = "0.10.7"
+chrono = "0.4.0"        # Affected by RUSTSEC-2020-0159
+hyper = "0.12.0"        # Affected by RUSTSEC-2021-0079
+openssl = "0.10.0"      # Affected by multiple vulnerabilities
 
