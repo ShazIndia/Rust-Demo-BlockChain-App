@@ -1,0 +1,31 @@
+name: Cut Release Branch
+
+on:
+  workflow_dispatch:  # Manual trigger for cutting release branch
+    inputs:
+      release_version:
+        description: 'The release version to create'
+        required: true
+      base_branch:
+        description: 'The branch to cut the release from (e.g., main or develop)'
+        default: 'main'
+
+jobs:
+  create-release-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Git user
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+
+    - name: Create and push release branch
+      run: |
+        git checkout ${{ inputs.base_branch }} # Checkout the base branch (main/develop)
+        git pull origin ${{ inputs.base_branch }} # Pull the latest changes
+        git checkout -b release-${{ inputs.release_version }} # Create the release branch
+        git push origin release-${{ inputs.release_version }} # Push the release branch to GitHub
