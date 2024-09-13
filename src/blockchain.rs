@@ -55,7 +55,7 @@ impl Blockchain {
 }
 
 mod tests {
-
+    use super::*;
     #[test]
     fn test_block_creation() {
         let block = Block::new(1, 1627504203, "Test Block".to_string(), "0".to_string());
