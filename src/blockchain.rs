@@ -55,7 +55,6 @@ impl Blockchain {
 }
 
 mod tests {
-    use super::*;
 
     #[test]
     fn test_block_creation() {
