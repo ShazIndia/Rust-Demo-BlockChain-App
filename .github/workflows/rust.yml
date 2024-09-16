@@ -3,7 +3,7 @@
 name: Use Reusable Rust Build Workflow
 
 on:
-  workflow_dispatch:
+  workflow_call:
     inputs:
       toolchain:
         description: 'Rust toolchain version (e.g., stable, nightly)'
