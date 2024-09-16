@@ -33,9 +33,9 @@ jobs:
   use-reusable-workflow:
     uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/main-workflow.yml@main
     with:
-      toolchain: ${{ inputs.toolchain }}
-      target: ${{ inputs.target }}
-      components: ${{ inputs.components }}
+      toolchain: "stable"
+      target: "x86_64-unknown-linux-gnu"
+      components: "clippy"
 
 
 # # .github/workflows/use-reusable-workflow.yml
