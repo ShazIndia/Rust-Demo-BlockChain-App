@@ -31,7 +31,7 @@ on:
 
 jobs:
   use-reusable-workflow:
-    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/main-workflow.yml@main
+    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/buildtest-workflow.yml@main
     with:
       toolchain: "stable"
       target: "x86_64-unknown-linux-gnu"
