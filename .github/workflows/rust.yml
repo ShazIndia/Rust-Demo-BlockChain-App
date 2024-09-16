@@ -3,6 +3,9 @@
 name: Rust Workflow 
 
 on:
+  push:
+    branches: [ main ]
+
   workflow_call:
     inputs:
       toolchain:
