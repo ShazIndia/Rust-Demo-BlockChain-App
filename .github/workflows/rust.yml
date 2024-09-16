@@ -12,14 +12,17 @@ on:
         description: 'Rust toolchain version (e.g., stable, nightly)'
         required: true
         type: string
+        default: "stable"
       target:
         description: 'Compilation target (e.g., x86_64-unknown-linux-gnu)'
         required: true
         type: string
+        default: "x86_64-unknown-linux-gnu"
       components:
         description: 'Rust components to install (comma-separated, e.g., clippy, rustfmt, llvm-tools)'
         required: false
         type: string
+        default: "clippy"
       rustflags:
         description: 'Rust compiler flags (e.g., -C opt-level=3 -C target-cpu=native -C lto)'
         required: false
