@@ -1,0 +1,149 @@
+When you encounter the "blocking waiting for file lock on package cache" error while running cargo audit and cargo cyclonedx in GitHub Actions, it's likely due to multiple parallel processes attempting to access the same package cache. Both commands may try to interact with the .cargo cache at the same time, leading to a lock contention.
+
+Here are strategies to mitigate this issue when using GitHub Actions:
+
+1. Run cargo audit and cargo cyclonedx Sequentially
+Make sure that cargo audit and cargo cyclonedx are run one after the other instead of in parallel, as they both need access to the cargo cache. You can enforce sequential execution by splitting them into separate steps within the same job:
+
+yaml
+Copy code
+steps:
+  - name: Run cargo audit
+    run: cargo audit
+   
+  - name: Run cargo cyclonedx
+    run: cargo cyclonedx
+This ensures that only one of them is holding the lock at a time.
+
+2. Use Caching Effectively
+Since cargo audit and cargo cyclonedx both rely on the same package cache, caching can help reduce the overhead and potential for lock contention. Here's an example of caching the cargo registry and index:
+
+yaml
+Copy code
+steps:
+  - name: Cache cargo registry
+    uses: actions/cache@v3
+    with:
+      path: ~/.cargo/registry
+      key: ${{ runner.os }}-cargo-audit-${{ hashFiles('**/Cargo.lock') }}
+      restore-keys: |
+        ${{ runner.os }}-cargo-
+  
+  - name: Cache cargo index
+    uses: actions/cache@v3
+    with:
+      path: ~/.cargo/git
+      key: ${{ runner.os }}-cargo-audit-index-${{ hashFiles('**/Cargo.lock') }}
+      restore-keys: |
+        ${{ runner.os }}-cargo-index-
+This will prevent redundant downloads of packages during the audit and cyclonedx steps and minimize contention.
+
+3. Manually Remove Stale Locks
+If you continue encountering lock issues, you can add a step to manually remove the lock file before running cargo audit and cargo cyclonedx. This is a bit more aggressive and should be used with caution.
+
+yaml
+Copy code
+steps:
+  - name: Remove cargo lock
+    run: rm -f ~/.cargo/.package-cache-lock
+
+  - name: Run cargo audit
+    run: cargo audit
+
+  - name: Run cargo cyclonedx
+    run: cargo cyclonedx
+Ensure that no other cargo commands are running at the same time, as this could lead to corruption of the cache.
+
+4. Set a Timeout
+If there's a risk of jobs hanging due to waiting for locks, you can set a timeout for your commands to fail gracefully:
+
+yaml
+Copy code
+steps:
+  - name: Run cargo audit with timeout
+    run: cargo audit
+    timeout-minutes: 5
+
+  - name: Run cargo cyclonedx with timeout
+    run: cargo cyclonedx
+    timeout-minutes: 5
+This prevents the GitHub Action from running indefinitely if there’s an issue with a lock file.
+
+5. Separate the Jobs
+You can separate cargo audit and cargo cyclonedx into different jobs within the workflow, which will run in separate environments:
+
+yaml
+Copy code
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-audit-${{ hashFiles('**/Cargo.lock') }}
+      - name: Run cargo audit
+        run: cargo audit
+
+  cyclonedx:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-cyclonedx-${{ hashFiles('**/Cargo.lock') }}
+      - name: Run cargo cyclonedx
+        run: cargo cyclonedx
+By splitting them into separate jobs, they won't compete for the same lock file.
+
+Example GitHub Actions Workflow
+Here’s an example of a complete workflow with sequential execution, caching, and lock removal:
+
+yaml
+Copy code
+name: Rust Security & SBOM
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache cargo registry
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/registry
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Cache cargo index
+        uses: actions/cache@v3
+        with:
+          path: ~/.cargo/git
+          key: ${{ runner.os }}-cargo-index-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-index-
+
+      - name: Remove stale locks
+        run: rm -f ~/.cargo/.package-cache-lock
+
+      - name: Run cargo audit
+        run: cargo audit
+
+      - name: Run cargo cyclonedx
+        run: cargo cyclonedx
+This structure ensures sequential execution, cache optimization, and a safety mechanism for stale lock files.
