@@ -1,31 +1,62 @@
-name: Cut Release Branch
+name: Release Branch
 
 on:
-  workflow_dispatch:  # Manual trigger for cutting release branch
+  push:
+    branches: [ main ]
+
+  workflow_call:
     inputs:
-      release_version:
-        description: 'The release version to create'
+      toolchain:
+        description: 'Rust toolchain version (e.g., stable, nightly)'
         required: true
+        type: string
+        default: "stable"
+      target:
+        description: 'Compilation target (e.g., x86_64-unknown-linux-gnu)'
+        required: true
+        type: string
+        default: "x86_64-unknown-linux-gnu"
+      components:
+        description: 'Rust components to install (comma-separated, e.g., clippy, rustfmt, llvm-tools)'
+        required: false
+        type: string
+        default: "clippy"
+      release_version:
+        description: 'Version of the release (e.g., 1.0.0)'
+        required: true
+        type: string
+        default: '1.0.0'
       base_branch:
-        description: 'The branch to cut the release from (e.g., main or develop)'
+        description: 'Base branch to cut the release from (e.g., main or develop)'
+        required: true
+        type: string
         default: 'main'
+      git_username:
+        description: 'Git username for the commit'
+        required: true
+        type: string
+        default: 'GitHub Actions Bot'
+      git_email:
+        description: 'Git email for the commit'
+        type: string
+        required: true
+        default: 'actions@github.com'
 
 jobs:
-  create-release-branch:
-    runs-on: ubuntu-latest
+ Release-Stage:
+    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/sbom-workflow.yml@main/release-workflow.yml
+    with:
+      release_version: "1.0.0"
+      base_branch: "main"
+      git_username: "ShazIndia"
+      git_email: "shashi11107@gmail.com"
 
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+ Build-Stage:
+    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/sbom-workflow.yml@main
+    with:
+      toolchain: "stable"
+      target: "x86_64-unknown-linux-gnu"
+      components: "clippy"
 
-    - name: Set up Git user
-      run: |
-        git config user.name "github-actions[bot]"
-        git config user.email "github-actions[bot]@users.noreply.github.com"
-
-    - name: Create and push release branch
-      run: |
-        git checkout ${{ inputs.base_branch }} # Checkout the base branch (main/develop)
-        git pull origin ${{ inputs.base_branch }} # Pull the latest changes
-        git checkout -b release-${{ inputs.release_version }} # Create the release branch
-        git push origin release-${{ inputs.release_version }} # Push the release branch to GitHub
+  # Optionally: Add Rust build, test, or lint steps here if required
+ 
