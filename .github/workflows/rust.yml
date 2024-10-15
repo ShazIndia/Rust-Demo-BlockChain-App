@@ -1,6 +1,6 @@
 # .github/workflows/use-reusable-workflow.yml
 
-name: CI Rust Workflow for Cargo Audit
+name: CI Rust Workflow for Cargo Audit Report
 
 on:
   push:
