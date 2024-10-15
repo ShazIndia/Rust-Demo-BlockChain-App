@@ -39,4 +39,59 @@ fn main() {
         input.unwrap()  // Will panic if input is None
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json::json;
+
+    #[test]
+    fn test_underflow_in_subtraction() {
+        // Trigger integer underflow: x - y with y > x.
+        let result = calc_basic::sub_x_y(5, 10);
+        assert_eq!(result, 251); // Underflow behavior: 5 - 10 wraps around in u8.
+    }
+
+    #[test]
+    fn test_division_by_zero() {
+        // Trigger division by zero. Should handle this gracefully but doesn't.
+        let result = calc_basic::divide_x_y(100.0, 0.0);
+        match result {
+            Ok(_) => panic!("Expected error, but got Ok"),
+            Err(e) => assert_eq!(e, "Division by zero".to_string()), // Fails as no such check exists.
+        }
+    }
+
+    #[test]
+    fn test_nan_handling_in_division() {
+        // Division involving NaN. Vulnerability: No NaN validation.
+        let result = calc_basic::divide_x_y(0.0 / 0.0, 1.0);
+        assert!(result.unwrap().is_nan()); // Should ideally return an error.
+    }
+
+    #[test]
+    fn test_unsafe_deserialization() {
+        // Deserialize untrusted JSON data.
+        let malicious_json = r#"{"key": "\u{1F4A9}"}"#; // JSON with unexpected content.
+        let result = calc_basic::deserialize_user_data(malicious_json);
+        assert!(result.is_ok(), "Failed to deserialize"); // No validation of deserialized data.
+    }
+
+    #[test]
+    #[should_panic(expected = "called `Option::unwrap()` on a `None` value")]
+    fn test_unwrap_panic() {
+        // Trigger a panic using unwrap() on None.
+        calc_basic::risky_operation(None); // This should panic.
+    }
+
+    #[test]
+    fn test_deserialization_failure_handling() {
+        // Ensure that malformed JSON is handled safely.
+        let invalid_json = r#"{"key": }"#; // Malformed JSON.
+        let result = calc_basic::deserialize_user_data(invalid_json);
+        assert!(result.is_err(), "Expected deserialization to fail");
+        assert_eq!(result.unwrap_err(), "Deserialization failed");
+    }
+}
+
 */
