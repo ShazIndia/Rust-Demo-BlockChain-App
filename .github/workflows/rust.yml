@@ -31,7 +31,7 @@ on:
 
 jobs:
   use-reusable-workflow:
-    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/scan-workflow.yml@main
+    uses: ShazIndia/Actions-Reusable-Workflows/.github/workflows/sbom-workflow.yml@main
     with:
       toolchain: "stable"
       target: "x86_64-unknown-linux-gnu"
