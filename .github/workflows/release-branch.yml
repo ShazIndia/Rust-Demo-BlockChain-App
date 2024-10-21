@@ -2,7 +2,7 @@ name: Release Branch
 
 on:
   push:
-    #branches: [ main ]
+    branches: [ ShazIndia-changemainfile ]
 
   workflow_call:
     inputs:
